@@ -37,6 +37,7 @@ export function GoogleServicesTool() {
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load sites from persistent storage on mount
   useEffect(() => {
@@ -46,19 +47,24 @@ export function GoogleServicesTool() {
           typeof window !== 'undefined' && window.localStorage
             ? window.localStorage.getItem(STORAGE_KEY)
             : await AsyncStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const parsed = JSON.parse(raw) as SiteEntry[];
-        if (Array.isArray(parsed)) {
-          setSites(parsed);
+        if (raw) {
+          const parsed = JSON.parse(raw) as SiteEntry[];
+          if (Array.isArray(parsed)) {
+            setSites(parsed);
+          }
         }
       } catch {
         // Ignore storage errors and fall back to defaults
+      } finally {
+        setIsLoaded(true);
       }
     })();
   }, []);
 
   // Persist sites whenever they change
   useEffect(() => {
+    if (!isLoaded) return;
+
     (async () => {
       try {
         const serialized = JSON.stringify(sites);
@@ -71,7 +77,7 @@ export function GoogleServicesTool() {
         // Ignore storage errors
       }
     })();
-  }, [sites]);
+  }, [sites, isLoaded]);
 
   const openSite = useCallback((site: SiteEntry) => {
     setOpenTabs((prev) => {

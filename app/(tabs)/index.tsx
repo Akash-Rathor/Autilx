@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -15,12 +15,27 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const router = useRouter();
-  const { selectedToolIds } = useSelectedTools();
+  const { selectedToolIds, removeTool } = useSelectedTools();
   const [openedToolId, setOpenedToolId] = useState<string | null>(null);
 
   const goToTools = useCallback(() => {
     router.push('/(tabs)/tools');
   }, [router]);
+
+  const handleRemoveTool = useCallback((id: string) => {
+    Alert.alert(
+      'Remove Tool',
+      `Are you sure you want to remove ${id === 'google-services' ? 'Google Services' : id} from your home page?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Remove', 
+          style: 'destructive',
+          onPress: () => removeTool(id)
+        },
+      ]
+    );
+  }, [removeTool]);
 
   const hasGoogleServices = selectedToolIds.includes('google-services');
 
@@ -87,12 +102,20 @@ export default function HomeScreen() {
                   ]}
                 >
                   <ThemedView style={styles.toolCardInfo}>
-                    <ThemedText type="defaultSemiBold" style={styles.toolCardTitle}>
-                      {id === 'google-services' ? 'Google Services' : id}
-                    </ThemedText>
-                    <ThemedText type="default" style={styles.toolCardChevron}>
-                      Tap to open →
-                    </ThemedText>
+                    <View style={styles.toolCardMainInfo}>
+                      <ThemedText type="defaultSemiBold" style={styles.toolCardTitle}>
+                        {id === 'google-services' ? 'Google Services' : id}
+                      </ThemedText>
+                      <ThemedText type="default" style={styles.toolCardChevron}>
+                        Tap to open →
+                      </ThemedText>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => handleRemoveTool(id)}
+                      style={styles.removeButton}
+                    >
+                      <IconSymbol name="trash.fill" size={20} color="#ff4444" />
+                    </TouchableOpacity>
                   </ThemedView>
                 </Pressable>
               ))}
@@ -161,6 +184,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'transparent',
+  },
+  toolCardMainInfo: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  removeButton: {
+    padding: 8,
+    marginLeft: 12,
   },
   toolCardTitle: {
     fontSize: 18,
