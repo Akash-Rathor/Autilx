@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -108,6 +109,15 @@ export default function HomeScreen() {
   }, []);
 
   const colors = Colors[colorScheme ?? 'light'];
+
+  const getFaviconUrl = useCallback((url: string) => {
+    try {
+      const parsed = new URL(url);
+      return `${parsed.origin}/favicon.ico`;
+    } catch {
+      return undefined;
+    }
+  }, []);
 
   if (viewMode === 'browser' && openTabs.length > 0) {
     return (
@@ -282,9 +292,17 @@ export default function HomeScreen() {
                 pressed && styles.siteButtonPressed,
               ]}
             >
-              <ThemedText type="subtitle" style={styles.siteButtonTitle}>
-                {site.title}
-              </ThemedText>
+              <View style={styles.siteHeaderRow}>
+                {getFaviconUrl(site.url) && (
+                  <Image
+                    source={{ uri: getFaviconUrl(site.url)! }}
+                    style={styles.favicon}
+                  />
+                )}
+                <ThemedText type="subtitle" style={styles.siteButtonTitle}>
+                  {site.title}
+                </ThemedText>
+              </View>
               <ThemedText type="default" style={styles.siteButtonUrl}>
                 {site.url}
               </ThemedText>
@@ -422,6 +440,11 @@ const styles = StyleSheet.create({
   siteInfo: {
     flex: 1,
   },
+  siteHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   siteButtonTitle: {
     marginBottom: 4,
   },
@@ -442,5 +465,11 @@ const styles = StyleSheet.create({
   deleteButtonLabel: {
     color: '#ff4d4f',
     fontSize: 14,
+  },
+  favicon: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    backgroundColor: '#00000022',
   },
 });
