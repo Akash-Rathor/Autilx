@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import { WebView } from 'react-native-webview';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -334,65 +337,71 @@ export function GoogleServicesTool() {
         transparent={true}
         onRequestClose={() => setIsAddModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <ThemedView style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <ThemedText type="subtitle">Add a custom site</ThemedText>
-              <TouchableOpacity onPress={() => setIsAddModalVisible(false)}>
-                <ThemedText style={styles.modalCloseButton}>✕</ThemedText>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.formContainer}>
-              <View style={styles.formRow}>
-                <TextInput
-                  placeholder="Title"
-                  placeholderTextColor={colorScheme === 'dark' ? '#777' : '#999'}
-                  value={newTitle}
-                  onChangeText={setNewTitle}
-                  style={[
-                    styles.input,
-                    {
-                      color: colors.text,
-                      borderColor: colorScheme === 'dark' ? '#444' : '#ddd',
-                      backgroundColor: colorScheme === 'dark' ? '#151515' : '#fafafa',
-                    },
-                  ]}
-                />
-                <TextInput
-                  placeholder="URL (e.g. https://example.com)"
-                  placeholderTextColor={colorScheme === 'dark' ? '#777' : '#999'}
-                  value={newUrl}
-                  onChangeText={setNewUrl}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="url"
-                  style={[
-                    styles.input,
-                    {
-                      color: colors.text,
-                      borderColor: colorScheme === 'dark' ? '#444' : '#ddd',
-                      backgroundColor: colorScheme === 'dark' ? '#151515' : '#fafafa',
-                    },
-                  ]}
-                />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.modalOverlay}>
+            <ThemedView style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <ThemedText type="subtitle">Add a custom site</ThemedText>
+                <TouchableOpacity onPress={() => setIsAddModalVisible(false)}>
+                  <ThemedText style={styles.modalCloseButton}>✕</ThemedText>
+                </TouchableOpacity>
               </View>
-              <Pressable
-                onPress={addSite}
-                style={({ pressed }) => [
-                  styles.addButton,
-                  { backgroundColor: colors.tint },
-                  pressed && styles.addButtonPressed,
-                ]}
-              >
-                <ThemedText type="defaultSemiBold" style={styles.addButtonLabel}>
-                  Add site
-                </ThemedText>
-              </Pressable>
-            </View>
-          </ThemedView>
-        </View>
+
+              <View style={styles.formContainer}>
+                <View style={styles.formRow}>
+                  <TextInput
+                    placeholder="Title"
+                    placeholderTextColor={colorScheme === 'dark' ? '#777' : '#999'}
+                    value={newTitle}
+                    onChangeText={setNewTitle}
+                    style={[
+                      styles.input,
+                      {
+                        color: colors.text,
+                        borderColor: colorScheme === 'dark' ? '#444' : '#ddd',
+                        backgroundColor: colorScheme === 'dark' ? '#151515' : '#fafafa',
+                      },
+                    ]}
+                  />
+                  <TextInput
+                    placeholder="URL (e.g. https://example.com)"
+                    placeholderTextColor={colorScheme === 'dark' ? '#777' : '#999'}
+                    value={newUrl}
+                    onChangeText={setNewUrl}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="url"
+                    style={[
+                      styles.input,
+                      {
+                        color: colors.text,
+                        borderColor: colorScheme === 'dark' ? '#444' : '#ddd',
+                        backgroundColor: colorScheme === 'dark' ? '#151515' : '#fafafa',
+                      },
+                    ]}
+                  />
+                </View>
+                <Pressable
+                  onPress={addSite}
+                  style={({ pressed }) => [
+                    styles.addButton,
+                    { backgroundColor: colors.tint },
+                    pressed && styles.addButtonPressed,
+                  ]}
+                >
+                  <ThemedText type="defaultSemiBold" style={styles.addButtonLabel}>
+                    Add site
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </ThemedView>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
+
       <ScrollView
         style={styles.listScroll}
         contentContainerStyle={styles.listContent}
