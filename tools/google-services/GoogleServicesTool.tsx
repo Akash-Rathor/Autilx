@@ -312,11 +312,21 @@ export function GoogleServicesTool() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.listHeader}>
+        <View style={styles.headerTitleRow}>
+          <ThemedText type="subtitle">Manage Sites</ThemedText>
+          <TouchableOpacity
+            onPress={() => setIsAddModalVisible(true)}
+            style={[styles.headerAddButton, { backgroundColor: colors.tint }]}
+          >
+            <ThemedText style={styles.headerAddButtonText}>+</ThemedText>
+          </TouchableOpacity>
+        </View>
         <ThemedText type="default" style={styles.listSubtitle}>
           Tap a site to open it in the app. Switch between open sites from the
           top bar; going back keeps your tabs.
         </ThemedText>
       </View>
+
 
       <Modal
         visible={isAddModalVisible}
